@@ -30,7 +30,7 @@ delay = 0
 adresses.each_value do |entry|
   if interrupted
     File.open(ARGV[1], 'w') { |f| f.write(JSON.pretty_generate(adresses)) }
-    exit 'Interrompu'
+    abort 'Interrompu'
   end
 
   if entry.has_key?('adresse_normalisee') && (!entry.has_key?('geolocalisation'))
@@ -38,7 +38,7 @@ adresses.each_value do |entry|
 
     result = query(adresse)
     while result['status'] == 'OVER_QUERY_LIMIT'
-      delay += 10
+      delay += 2
       sleep delay
       result = query(adresse)
     end
