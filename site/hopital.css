@@ -1,0 +1,40 @@
+html {
+    font-family: sans-serif;
+    font-size: 12px;
+}
+
+body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+#navigation {
+    position: absolute;
+    top: 5px;
+    left: 5px;
+    width: 195px;
+}
+
+#refresh_form li {
+    list-style: none;
+    padding: 0px;
+    margin: 0px;
+}
+
+#refresh_form ul {
+    padding: 0px;
+    margin: 0px;
+}
+
+#license {
+    font-size: 10px;
+}
+
+#map_canvas {
+    position: absolute;
+    top: 0;
+    left: 200px;
+    right: 0;
+    height: 100%
+}

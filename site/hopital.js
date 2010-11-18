@@ -1,3 +1,4 @@
+var map;
 $(function () {
     var paris = new google.maps.LatLng(48.8579, 2.3518);
 
@@ -6,7 +7,7 @@ $(function () {
         mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
-    var map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
+    map = new google.maps.Map(document.getElementById("map_canvas"), myOptions);
 
     //    if (navigator.geolocation) {
     //        navigator.geolocation.getCurrentPosition(function(position) {
@@ -23,11 +24,11 @@ $(function () {
             new google.maps.Size(20, 34),
             new google.maps.Point(0, 0),
             new google.maps.Point(10, 34)),
-        "pnl": new google.maps.MarkerImage('2.png',
+        "prn": new google.maps.MarkerImage('2.png',
                 new google.maps.Size(20, 34),
                 new google.maps.Point(0, 0),
                 new google.maps.Point(10, 34)),
-        "pl": new google.maps.MarkerImage('3.png',
+        "prl": new google.maps.MarkerImage('3.png',
                 new google.maps.Size(20, 34),
                 new google.maps.Point(0, 0),
                 new google.maps.Point(10, 34))};
@@ -36,9 +37,10 @@ $(function () {
 
     for (var i = 0; i < adresses.length; i++) {
         var adresse = adresses[i];
-        new google.maps.Marker({
+        adresse.displayed = false;
+        adresse.marker = new google.maps.Marker({
             position: new google.maps.LatLng(adresse.geolocalisation.lat, adresse.geolocalisation.lng),
-            map: map,
+            map: null,
             title: adresse.nom,
             icon: images[adresse.type_structure]
         });
@@ -46,5 +48,32 @@ $(function () {
 
 });
 
+function updateDisplay() {
+    var pu = $('#ch_pu:checked').length == 1;
+    var prn = $('#ch_prn:checked').length == 1;
+    var prl = $('#ch_prl:checked').length == 1;
 
-
+    for (var i = 0; i < adresses.length; i++) {
+        var adresse = adresses[i];
+        var displayed = false;
+        switch (adresse.type_structure) {
+            case "pu":
+                displayed = pu;
+                break;
+            case "prn":
+                displayed = prn;
+                break;
+            case "prl":
+                displayed = prl;
+                break;
+            default:
+        }
+        if (displayed && (!adresse.displayed)) {
+            adresse.marker.setMap(map);
+            adresse.displayed = true;
+        } else if ((!displayed) && adresse.displayed) {
+            adresse.marker.setMap(null);
+            adresse.displayed = false;
+        }
+    }
+}

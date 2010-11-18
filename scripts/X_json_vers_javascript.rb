@@ -12,7 +12,7 @@ adresses = JSON.parse IO.read(ARGV[0])
 
 result = [];
 
-TYPE_STRUCTURE = {'Etablissement public' => 'pu', 'Etablissement privé à but non lucratif' => 'pnl', 'Etablissement privé à but lucratif' => 'pl'}
+TYPE_STRUCTURE = {'Etablissement public' => 'pu', 'Etablissement privé à but non lucratif' => 'prn', 'Etablissement privé à but lucratif' => 'prl'}
 
 adresses.each_value do |entry|
   if entry.has_key?('geolocalisation') && (entry['geolocalisation']['status'] == 'OK') && entry.has_key?('equipemement')
