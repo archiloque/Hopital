@@ -19,7 +19,8 @@ adresses.each_value do |entry|
     result << { 'nom' => entry['raison_sociale'],
                 'adresse' => entry['adresse_formattee'],
                 'geolocalisation' => entry['geolocalisation']['location'],
-                'type_structure' => TYPE_STRUCTURE[entry['type_structure']] }
+                'type_structure' => TYPE_STRUCTURE[entry['type_structure']],
+                'equipement' => entry['equipement'] }
   end
 end
 

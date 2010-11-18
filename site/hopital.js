@@ -48,10 +48,31 @@ $(function () {
 
 });
 
+function clickEquipementIndifferent() {
+    if ($('#e_:checked').length == 1) {
+        $('.e_s').attr('checked', false);
+    } else {
+        $('.e_s').attr('checked', true);
+    }
+}
+
+function clickEquipementSpecifique() {
+    $('#e_').attr('checked', $('.e_s:checked').length == 0);
+}
+
 function updateDisplay() {
     var pu = $('#ch_pu:checked').length == 1;
     var prn = $('#ch_prn:checked').length == 1;
     var prl = $('#ch_prl:checked').length == 1;
+
+    var e_ = $('#e_:checked').length == 1;
+
+    var es = $('#e_s:checked').length == 1;
+    var ei = $('#e_i:checked').length == 1;
+    var ex = $('#e_x:checked').length == 1;
+    var et = $('#e_t:checked').length == 1;
+    var eh = $('#e_h:checked').length == 1;
+    var ec = $('#e_c:checked').length == 1;
 
     for (var i = 0; i < adresses.length; i++) {
         var adresse = adresses[i];
@@ -68,6 +89,29 @@ function updateDisplay() {
                 break;
             default:
         }
+
+        if(!e_) {
+            var equipement = adresse.equipement;
+            if(es) {
+                displayed = displayed && equipement.scanner;
+            }
+            if(ei) {
+                displayed = displayed && equipement.IRM;
+            }
+            if(ex) {
+                displayed = displayed && equipement.scintillation;
+            }
+            if(et) {
+                displayed = displayed && equipement.TEP;
+            }
+            if(eh) {
+                displayed = displayed && equipement.hemodynamique;
+            }
+            if(ec) {
+                displayed = displayed && equipement.coronarographie;
+            }
+        }
+
         if (displayed && (!adresse.displayed)) {
             adresse.marker.setMap(map);
             adresse.displayed = true;

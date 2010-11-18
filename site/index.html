@@ -24,13 +24,37 @@
             <legend>Type</legend>
             <ul>
                 <li><input type="checkbox" id="ch_pu" name="pu"><label for="ch_pu">Public</label></li>
-                <li><input type="checkbox" id="ch_prn" name="prn"><label for="ch_prn">Privé à but non lucratif</label></li>
+                <li><input type="checkbox" id="ch_prn" name="prn"><label for="ch_prn">Privé à but non lucratif</label>
+                </li>
                 <li><input type="checkbox" id="ch_prl" name="prl"><label for="ch_prl">Privé à but lucratif</label></li>
             </ul>
         </fieldset>
+        <br>
+        <fieldset>
+            <legend>Équipement</legend>
+            <ul>
+                <li><input type="checkbox" id="e_" name="e_" checked onclick="clickEquipementIndifferent();"><label
+                        for="e_">Indifférent</label></li>
+                <li>&nbsp;</li>
+                <li><input class="e_s" type="checkbox" id="e_s" name="e_s" onclick="clickEquipementSpecifique();"><label
+                        for="e_s">Scanner</label></li>
+                <li><input class="e_s" type="checkbox" id="e_i" name="e_i" onclick="clickEquipementSpecifique();"><label
+                        for="e_i">IRM</label></li>
+                <li><input class="e_s" type="checkbox" id="e_x" name="e_x" onclick="clickEquipementSpecifique();"><label
+                        for="e_x">Caméra à scintillation</label></li>
+                <li><input class="e_s" type="checkbox" id="e_t" name="e_t" onclick="clickEquipementSpecifique();"><label
+                        for="e_t">TEP</label></li>
+                <li><input class="e_s" type="checkbox" id="e_h" name="e_h" onclick="clickEquipementSpecifique();"><label
+                        for="e_h">Salles d'hémodynamique</label></li>
+                <li><input class="e_s" type="checkbox" id="e_c" name="e_c" onclick="clickEquipementSpecifique();"><label
+                        for="e_c">Salles de coronarographie</label></li>
+            </ul>
+        </fieldset>
+        <br>
         <input title="Mettre à jour" name="refresh" value="Mettre à jour" type="submit">
     </form>
     <br>
+
     <div id="license">Les données sont issues des sites http://finess.sante.gouv.fr et http://platines.sante.gouv.fr
     </div>
 </div>
