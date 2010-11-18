@@ -1,7 +1,10 @@
 # Récupère les information de géocodage avec l'API Google Maps
 # Prend en entrée le nom d'un fichier json d'entrée et le nom d'un fichier json en sortie
-# Les informations de géolocalisation sont stockées dans l'attribute "geolocalisation"
-# et l'adresse formattée est stockée dans "adresse_formattee"
+# Récupère l'adresse dans la valeur "adresse_normalisee" et n'appeller google que si
+# la clé geolocalisation n'est pas présente
+# L'adresse formattée est stockée dans "adresse_formattee"
+# Les informations de géolocalisation sont stockées dans l'attribut "geolocalisation"
+
 
 if ARGV.length != 2
   raise 'Deux noms de fichier à spécifier'
@@ -13,6 +16,7 @@ require 'rest-client'
 
 adresses = JSON.parse IO.read(ARGV[0])
 
+# Fait un appel à google maps avec l'adresse passée en paramètre et parse le retour sour forme json
 def query adresse
   JSON.parse(RestClient.get 'http://maps.googleapis.com/maps/api/geocode/json',
                             {:params =>

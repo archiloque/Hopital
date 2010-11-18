@@ -4,6 +4,8 @@
 # le résultat est sous forme json affiché dans la console
 # les éléments non trouvés ont un contenu vide
 
+# Note: les données de http://finess.sante.gouv.fr sont soumis à une license d'utilisation
+
 require 'rubygems'
 require 'cgi'
 require 'safariwatir'
@@ -38,7 +40,7 @@ File.open(ARGV[0]).each { |line|
     browser.goto 'http://finess.sante.gouv.fr/finess/actionRechercheSimple.do?order=reset'
   rescue RuntimeError => e
     # quand le code est manquant le site affiche une fenêtre d'alerte dans la nouvelle page
-    # qui se transforme en un timout
+    # qui se transforme en un timeout
     unless e.message == "Unable to load page within 10 seconds"
       raise e
     end

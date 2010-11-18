@@ -1,8 +1,8 @@
-# Transforme le fichier json avec les donnŽes brute en un fichier javascript pour le site
-# Prend en entrŽe le nom d'un fichier json d'entrŽe et le nom d'un fichier js en sortie
+# Transforme le fichier json avec les donnÃ©es brute en un fichier javascript pour le site
+# Prend en entrÃ©e le nom d'un fichier json d'entrÃ©e et le nom d'un fichier js en sortie
 
 if ARGV.length != 2
-  raise 'Deux noms de fichier ˆ spŽcifier'
+  raise 'Deux noms de fichier Ã  spÃ©cifier'
 end
 
 require 'rubygems'
@@ -12,16 +12,19 @@ adresses = JSON.parse IO.read(ARGV[0])
 
 result = [];
 
+TYPE_STRUCTURE = {'Etablissement public' => 'pu', 'Etablissement privÃ© Ã  but non lucratif' => 'pnl', 'Etablissement privÃ© Ã  but lucratif' => 'pl'}
+
 adresses.each_value do |entry|
-  if entry.has_key?('geolocalisation') && (entry['geolocalisation']['status'] == 'OK')
+  if entry.has_key?('geolocalisation') && (entry['geolocalisation']['status'] == 'OK') && entry.has_key?('equipemement')
     result << { 'nom' => entry['raison_sociale'],
                 'adresse' => entry['adresse_formattee'],
-                'geolocalisation' => entry['geolocalisation']['location'] }
+                'geolocalisation' => entry['geolocalisation']['location'],
+                'type_structure' => TYPE_STRUCTURE[entry['type_structure']] }
   end
 end
 
 File.open(ARGV[1], 'w') do |f|
   f << "var adresses = \n"
-  f.write(JSON.pretty_generate(result))
+  f.write(JSON.generate(result))
   f << ";"
 end
