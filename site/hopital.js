@@ -16,6 +16,10 @@ var ACTIVITE_LIST = {
 
 var map;
 var geocoder;
+var directionsService;
+var directionsDisplay;
+var possible_images;
+
 $(function () {
     var paris = new google.maps.LatLng(48.8579, 2.3518);
 
@@ -26,7 +30,7 @@ $(function () {
         language: "fr"
     });
 
-    var images = {"pu": new google.maps.MarkerImage('1.png',
+    possible_images = {"pu": new google.maps.MarkerImage('1.png',
             new google.maps.Size(20, 34),
             new google.maps.Point(0, 0),
             new google.maps.Point(10, 34)),
@@ -42,26 +46,28 @@ $(function () {
     map.setCenter(paris);
 
     for (var i = 0; i < adresses.length; i++) {
-        createMarker(adresses[i], images);
+        createMarker(adresses[i]);
     }
 
     geocoder = new google.maps.Geocoder();
+    directionsService = new google.maps.DirectionsService();
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    directionsDisplay.setMap(map);
 });
 
-function createMarker(adresse, images) {
+function createMarker(adresse) {
     adresse.displayed = false;
     adresse.marker = new google.maps.Marker({
         position: new google.maps.LatLng(adresse.geolocalisation.lat, adresse.geolocalisation.lng),
         map: null,
         title: adresse.nom,
-        icon: images[adresse.type_structure]
+        icon: possible_images[adresse.type_structure]
     });
     google.maps.event.addListener(adresse.marker, 'click', function() {
         showAdresse(adresse);
     });
 }
 
-var caracteristiqueShown = false;
 var userPositionMarker = null;
 
 function updateAddress() {
@@ -82,10 +88,75 @@ function updateAddress() {
                         new google.maps.Point(10, 34))
             });
         } else {
-            alert("Geocode was not successful for the following reason: " + status);
+            alert("Impossible de trouver l'adresse");
         }
     });
 }
+
+function rad(x) {
+    return x * Math.PI / 180;
+}
+
+var highlited = null;
+
+function findNearest() {
+    if (!userPositionMarker) {
+        alert("Vous devez d'abord saisir votre adresse")
+    } else {
+        var R = 6371;
+        var nearest = null;
+        var minDistance = -1;
+        var lat = userPositionMarker.position.lat();
+        var lng = userPositionMarker.position.lng();
+        for (var i = 0; i < adresses.length; i++) {
+            var adresse = adresses[i];
+            if (adresse.displayed) {
+                var mlat = adresse.marker.position.lat();
+                var mlng = adresse.marker.position.lng();
+                var dLat = rad(mlat - lat);
+                var dLong = rad(mlng - lng);
+                var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                        Math.cos(rad(lat)) * Math.cos(rad(lat)) * Math.sin(dLong / 2) * Math.sin(dLong / 2);
+                var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                var d = R * c;
+                if ((minDistance == -1) || (d < minDistance)) {
+                    minDistance = d;
+                    nearest = adresse;
+                }
+            }
+        }
+        if (nearest == null) {
+            alert("Aucun hopital n'est affiché")
+        } else {
+            if (highlited != null) {
+                highlited.marker.setIcon(possible_images[adresse.type_structure]);
+            }
+            highlited = nearest;
+            highlited.marker.setIcon(new google.maps.MarkerImage('5.png',
+                    new google.maps.Size(20, 34),
+                    new google.maps.Point(0, 0),
+                    new google.maps.Point(10, 34)));
+            showAdresse(nearest);
+            var request = {
+                origin: userPositionMarker.position,
+                destination: nearest.marker.position,
+                travelMode: google.maps.DirectionsTravelMode.DRIVING,
+                unitSystem: google.maps.DirectionsUnitSystem.METRIC,
+                region: "FR"
+            };
+            directionsService.route(request, function(result, status) {
+                if (status == google.maps.DirectionsStatus.OK) {
+                    directionsDisplay.setDirections(result);
+                    var leg = result.routes[0].legs[0];
+                    alert(leg.distance.text + ", " + leg.duration.text);
+                } else {
+                    alert("Route non trouvée")
+                }
+            });
+        }
+    }
+}
+var caracteristiqueShown = false;
 
 function showAdresse(info) {
     var content = "<ul><li>" + info.nom + "</li><li>" + info.adresse + "</li>";

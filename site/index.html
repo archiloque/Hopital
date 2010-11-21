@@ -59,7 +59,7 @@
                         for="e_c">Salles de coronarographie</label></li>
             </ul>
         </fieldset>
-        <input title="Mettre à jour" name="refresh" value="Mettre à jour" type="submit">
+        <input name="refresh" value="Mettre à jour" type="submit">
     </form>
     <br/>
 
@@ -72,9 +72,13 @@
                 <label for="adresse">Votre adresse</label>
                 <input id="adresse" name="adresse" type="text">
             </div>
-            <input title="Mettre à jour" name="refresh" value="Mettre à jour" type="submit">
+            <input value="Mettre à jour" type="submit">
         </form>
     </fieldset>
+
+    <form id="nearest_form" action="index.html" onsubmit="findNearest(); return false;">
+        <input value="Le plus proche" type="submit">
+    </form>
 
     <div id="license">Les données sont issues des sites http://finess.sante.gouv.fr et http://platines.sante.gouv.fr
     </div>
