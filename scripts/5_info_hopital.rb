@@ -23,6 +23,8 @@ ID_AIDE_EQUIPEMENT = {'scanner' => 30,
                       'hemodynamique' => 34,
                       'coronarographie' => 35}
 
+INDEX_LITS = {'medecine' => 4, 'chirurgie' => 5, 'obstetrique' => 6, 'psychiatrie' => 8}
+
 adresses.each_pair do |finess, entry|
   unless entry.has_key? 'caracteristiques'
     p finess
@@ -34,6 +36,12 @@ adresses.each_pair do |finess, entry|
       # avec XXX qui est dans la liste ID_AIDE_EQUIPEMENT
       caracteristiques[nom] = (doc.search("//a[@href='aide.php?nu=#{id}']")[0].parent.parent.children[2].children[0].text == 'oui')
     end
+
+    INDEX_LITS.each_pair do |nom, id|
+      # pour les lits on localise simplement la bonne case
+      caracteristiques[nom] = (doc.search("//div[@id='block_1']//tr[#{id}]//td[2]").text == '0')
+    end
+
   end
 end
 

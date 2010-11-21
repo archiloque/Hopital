@@ -15,7 +15,7 @@ result = [];
 TYPE_STRUCTURE = {'Etablissement public' => 'pu', 'Etablissement privé à but non lucratif' => 'prn', 'Etablissement privé à but lucratif' => 'prl'}
 
 adresses.each_value do |entry|
-  if entry.has_key?('geolocalisation') && (entry['geolocalisation']['status'] == 'OK') && entry.has_key?('equipemement')
+  if entry.has_key?('geolocalisation') && (entry['geolocalisation']['status'] == 'OK') && entry.has_key?('caracteristiques')
     result << { 'nom' => entry['raison_sociale'],
                 'adresse' => entry['adresse_formattee'],
                 'geolocalisation' => entry['geolocalisation']['location'],

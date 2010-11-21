@@ -1,10 +1,17 @@
-var CARACTERISTIQUES_LIST = {
+var EQUIPEMENT_LIST = {
     "scanner" : "Scanner",
     "IRM" : "IRM",
     "scintillation" : "Caméra à scintillation",
     "TEP" : "TEP",
     "hemodynamique": "Salles d'hémodynamique",
     "coronarographie": "Salles de coronarographie"
+};
+
+var ACTIVITE_LIST = {
+    "medecine": "Médecine",
+    "chirurgie": "Chirurgie",
+    "obstetrique": "Obstétrique",
+    "psychiatrie": 'Psychiatrie'
 };
 
 var map;
@@ -50,16 +57,23 @@ function createMarker(adresse, images) {
 }
 
 var caracteristiqueShown = false;
-function showAdresse(info) {
-    var content = "<ul><li>" + info.nom + "</li><li>" + info.adresse + "</li><li>";
 
-    var caracteristiques = [];
-    for (var k in info.caracteristiques) {
-        if (info.caracteristiques[k]) {
-            caracteristiques.push(CARACTERISTIQUES_LIST[k]);
+function showAdresse(info) {
+    var content = "<ul><li>" + info.nom + "</li><li>" + info.adresse + "</li>";
+
+    for (var i in ACTIVITE_LIST) {
+        content += "<li>" + ACTIVITE_LIST[i] + " : " + (info.caracteristiques[i] ? 'oui' : 'non') + "</li>";
+    }
+
+    var equipement = [];
+    for (i in EQUIPEMENT_LIST) {
+        if (info.caracteristiques[i]) {
+            equipement.push(EQUIPEMENT_LIST[i]);
         }
     }
-    content += caracteristiques.join(", ") + "</li></ul>";
+    content += "<li>" + equipement.join(", ") + "</li>";
+
+    content += "</ul>";
     $("#caracteristiques").html(content);
     if (!caracteristiqueShown) {
         $("#caracteristiques").slideDown();
@@ -68,7 +82,7 @@ function showAdresse(info) {
 }
 
 
-function clickEquipementIndifferent() {
+function clickIndifferent() {
     if ($('#e_:checked').length == 1) {
         $('.e_s').attr('checked', false);
     } else {
@@ -76,7 +90,7 @@ function clickEquipementIndifferent() {
     }
 }
 
-function clickEquipementSpecifique() {
+function clickSpecifique() {
     $('#e_').attr('checked', $('.e_s:checked').length == 0);
 }
 
@@ -86,6 +100,11 @@ function updateDisplay() {
     var prl = $('#ch_prl:checked').length == 1;
 
     var e_ = $('#e_:checked').length == 1;
+
+    var em = $('#e_m:checked').length == 1;
+    var ech = $('#e_ch:checked').length == 1;
+    var eo = $('#e_o:checked').length == 1;
+    var ep = $('#e_p:checked').length == 1;
 
     var es = $('#e_s:checked').length == 1;
     var ei = $('#e_i:checked').length == 1;
@@ -129,6 +148,19 @@ function updateDisplay() {
             }
             if (ec) {
                 displayed = displayed && caracteristiques.coronarographie;
+            }
+
+            if (em) {
+                displayed = displayed && caracteristiques.medecine;
+            }
+            if (ech) {
+                displayed = displayed && caracteristiques.chirurgie;
+            }
+            if (eo) {
+                displayed = displayed && caracteristiques.obstetrique;
+            }
+            if (ep) {
+                displayed = displayed && caracteristiques.psychiatrie;
             }
         }
 
