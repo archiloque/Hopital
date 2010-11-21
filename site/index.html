@@ -62,8 +62,19 @@
         <input title="Mettre à jour" name="refresh" value="Mettre à jour" type="submit">
     </form>
     <br/>
+
     <div id="caracteristiques">
     </div>
+
+    <fieldset>
+        <form id="adress_form" action="index.html" onsubmit="updateAddress(); return false;">
+            <div>
+                <label for="adresse">Votre adresse</label>
+                <input id="adresse" name="adresse" type="text">
+            </div>
+            <input title="Mettre à jour" name="refresh" value="Mettre à jour" type="submit">
+        </form>
+    </fieldset>
 
     <div id="license">Les données sont issues des sites http://finess.sante.gouv.fr et http://platines.sante.gouv.fr
     </div>

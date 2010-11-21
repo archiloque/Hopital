@@ -15,12 +15,15 @@ var ACTIVITE_LIST = {
 };
 
 var map;
+var geocoder;
 $(function () {
     var paris = new google.maps.LatLng(48.8579, 2.3518);
 
     map = new google.maps.Map(document.getElementById("map_canvas"), {
         zoom: 6,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        region: "FR",
+        language: "fr"
     });
 
     var images = {"pu": new google.maps.MarkerImage('1.png',
@@ -41,6 +44,8 @@ $(function () {
     for (var i = 0; i < adresses.length; i++) {
         createMarker(adresses[i], images);
     }
+
+    geocoder = new google.maps.Geocoder();
 });
 
 function createMarker(adresse, images) {
@@ -57,6 +62,30 @@ function createMarker(adresse, images) {
 }
 
 var caracteristiqueShown = false;
+var userPositionMarker = null;
+
+function updateAddress() {
+    var textValue = $("#adresse").val();
+    geocoder.geocode({ address: textValue, region: "FR",
+        language: "fr"}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+            map.setCenter(results[0].geometry.location);
+            if (userPositionMarker) {
+                userPositionMarker.setMap(null);
+            }
+            userPositionMarker = new google.maps.Marker({
+                map: map,
+                position: results[0].geometry.location,
+                icon: new google.maps.MarkerImage('4.png',
+                        new google.maps.Size(20, 34),
+                        new google.maps.Point(0, 0),
+                        new google.maps.Point(10, 34))
+            });
+        } else {
+            alert("Geocode was not successful for the following reason: " + status);
+        }
+    });
+}
 
 function showAdresse(info) {
     var content = "<ul><li>" + info.nom + "</li><li>" + info.adresse + "</li>";
@@ -95,6 +124,11 @@ function clickSpecifique() {
 }
 
 function updateDisplay() {
+    if (caracteristiqueShown) {
+        $("#caracteristiques").slideUp();
+        caracteristiqueShown = false;
+    }
+
     var pu = $('#ch_pu:checked').length == 1;
     var prn = $('#ch_prn:checked').length == 1;
     var prl = $('#ch_prl:checked').length == 1;
