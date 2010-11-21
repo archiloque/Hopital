@@ -20,7 +20,7 @@ adresses.each_value do |entry|
                 'adresse' => entry['adresse_formattee'],
                 'geolocalisation' => entry['geolocalisation']['location'],
                 'type_structure' => TYPE_STRUCTURE[entry['type_structure']],
-                'equipement' => entry['equipement'] }
+                'caracteristiques' => entry['caracteristiques'] }
   end
 end
 

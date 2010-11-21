@@ -1,6 +1,6 @@
 html {
     font-family: sans-serif;
-    font-size: 12px;
+    font-size: 10px;
 }
 
 body {
@@ -13,18 +13,31 @@ body {
     position: absolute;
     top: 5px;
     left: 5px;
-    width: 195px;
+    width: 190px;
+    height: 100%;
 }
 
-#refresh_form li {
+#license {
+    position: absolute;
+    bottom: 10px;
+}
+
+
+#refresh_form li, #caracteristiques li {
     list-style: none;
     padding: 0px;
     margin: 0px;
 }
 
-#refresh_form ul {
+#refresh_form ul, #caracteristiques ul {
     padding: 0px;
     margin: 0px;
+}
+
+#caracteristiques {
+    border: 1px black solid;
+    padding: 5px;
+    display: none;
 }
 
 #license {

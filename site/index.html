@@ -29,12 +29,11 @@
                 <li><input type="checkbox" id="ch_prl" name="prl"><label for="ch_prl">Privé à but lucratif</label></li>
             </ul>
         </fieldset>
-        <br>
         <fieldset>
-            <legend>Équipement</legend>
+            <legend>Caractéristiques</legend>
             <ul>
                 <li><input type="checkbox" id="e_" name="e_" checked onclick="clickEquipementIndifferent();"><label
-                        for="e_">Indifférent</label></li>
+                        for="e_">Indifférentes</label></li>
                 <li>&nbsp;</li>
                 <li><input class="e_s" type="checkbox" id="e_s" name="e_s" onclick="clickEquipementSpecifique();"><label
                         for="e_s">Scanner</label></li>
@@ -50,10 +49,11 @@
                         for="e_c">Salles de coronarographie</label></li>
             </ul>
         </fieldset>
-        <br>
         <input title="Mettre à jour" name="refresh" value="Mettre à jour" type="submit">
     </form>
-    <br>
+    <br/>
+    <div id="caracteristiques">
+    </div>
 
     <div id="license">Les données sont issues des sites http://finess.sante.gouv.fr et http://platines.sante.gouv.fr
     </div>
