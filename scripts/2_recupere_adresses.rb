@@ -1,51 +1,51 @@
-# Lit un fichier contenu une liste de codes finess
-# et pour chacun d'eux récupère son nom et son adresse
+# Lit la liste de codes finess et pour chacun d'eux récupère son nom et son adresse
 # sur le site http://finess.sante.gouv.fr/
-# le résultat est sous forme json affiché dans la console
+# le résultat est stocké en json dans le fichier adresses.json
 # les éléments non trouvés ont un contenu vide
 
 # Note: les données de http://finess.sante.gouv.fr sont soumis à une license d'utilisation
 
-require 'rubygems'
 require 'cgi'
-require 'safariwatir'
+require 'uri'
 require 'json'
-
-if ARGV.length != 1
-  raise "Nom du fichier manquant"
-end
+require 'safariwatir'
 
 browser = Watir::Safari.new
-browser.goto "http://finess.sante.gouv.fr"
 
-# on va jusqu'à la page
-browser.link(:text, 'Recherche Simple').click
-begin
-  browser.button(:name, 'validConditions').click
-rescue Watir::Exception::UnknownObjectException
-end
+# va contenir le résultat
+result = {}
 
 # on itère sur les codes
-result = {}
-File.open(ARGV[0]).each { |line|
+File.open('finess.txt').each { |line|
+  # on supprime d'éventuels espaces'
   line.strip!
-  STDERR << "#{line}\n"
-  browser.text_field(:name, 'nofiness').set(line)
-  begin
-    browser.button(:name, 'chercher').click
+  # on va à la page principale
+  browser.goto 'http://finess.sante.gouv.fr/finess/actionRechercheSimple.do?order=reset'
+  until browser.text_field(:id, 'nofiness').exists?
+    sleep 1
+  end
+  browser.text_field(:id, 'nofiness').set(line)
+  # on clique sur le bouton
+  browser.button(:id, 'chercher').click
+  i = 0
+  until (i == 10) || browser.image(:title, 'Imprimer').exists?
+    sleep 1
+    i += 1
+  end
+  # s'il y a un bouton imprimer c'est q'uon a un résultat'
+  if browser.image(:title, 'Imprimer').exists?
+    # on cherche les infos dans la page
     table_result = browser.table(:id, 'enTeteRecherche')
     raison_sociale = table_result[1][2].text
     adresse = table_result[2][2].text
     result[line] = {:raison_sociale => raison_sociale, :adresse => adresse}
-    browser.goto 'http://finess.sante.gouv.fr/finess/actionRechercheSimple.do?order=reset'
-  rescue RuntimeError => e
-    # quand le code est manquant le site affiche une fenêtre d'alerte dans la nouvelle page
-    # qui se transforme en un timeout
-    unless e.message == "Unable to load page within 10 seconds"
-      raise e
-    end
+  else
+    # sinon c'est qu'on a eu une popup d'alterte
+    browser.alert.click
     result[line] = {}
     browser.alert().click()
   end
 }
-STDOUT << JSON.pretty_generate(result)
+
+# on stocke le résultat dans adresses.json
+File.open('adresses.json', 'w') { |f| f.write(JSON.pretty_generate(result)) }

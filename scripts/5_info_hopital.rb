@@ -1,21 +1,19 @@
 # Récupère des informations à partir du site
 # http://platines.sante.gouv.fr
 # à partir des codes finess
-# Prend en entrée le nom d'un fichier json d'entrée et le nom d'un fichier json en sortie
+# Entrée dans adresses_geolocalisee.json et sortie dans adresses_info.json
 # Les informations stockées
 # - les caractéristiques dans l'attribut caracteristiques
 # - le type de structure dans type_structure
-if ARGV.length != 2
-  raise 'Deux noms de fichier à spécifier'
-end
 
-require 'rubygems'
 require 'json'
 require 'nokogiri'
 require 'open-uri'
 
-adresses = JSON.parse IO.read(ARGV[0])
+# on lit les données dans adresses_geolocalisee.json
+adresses = JSON.parse(IO.read('adresses_geolocalisee.json'))
 
+# les id des équipements
 ID_AIDE_EQUIPEMENT = {'scanner' => 30,
                       'IRM' => 31,
                       'scintillation' => 32,
@@ -23,6 +21,7 @@ ID_AIDE_EQUIPEMENT = {'scanner' => 30,
                       'hemodynamique' => 34,
                       'coronarographie' => 35}
 
+# les numéros des types de lits
 INDEX_LITS = {'medecine' => 4, 'chirurgie' => 5, 'obstetrique' => 6, 'psychiatrie' => 8}
 
 adresses.each_pair do |finess, entry|
@@ -45,4 +44,5 @@ adresses.each_pair do |finess, entry|
   end
 end
 
-File.open(ARGV[1], 'w') { |f| f.write(JSON.pretty_generate(adresses)) }
+# on stocke le résultat dans adresses_info.json
+File.open('adresses_info.json', 'w') { |f| f.write(JSON.pretty_generate(adresses)) }

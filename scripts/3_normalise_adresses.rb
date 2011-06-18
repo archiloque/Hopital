@@ -1,17 +1,13 @@
 # Normalise des adresse d'une manière qui soit compatible avec l'API Google Maps
-# Prend en entrée le nom d'un fichier json d'entrée et le nom d'un fichier json en sortie
+# Entrée dans adresses.json sortie dans adresses_normalisees.json
 # Normalise chaque item contenant la propriete adresse et la stocke sous adresse_normalisee
 
-if ARGV.length != 2
-  raise 'Deux noms de fichier à spécifier'
-end
-
-require 'rubygems'
 require 'json'
 
 REGEXP_ONLY_NUMERICS = Regexp.new('\d+')
 
-adresses = JSON.parse IO.read(ARGV[0])
+# on lit les données dans adresses.json
+adresses = JSON.parse IO.read('adresses.json')
 adresses.each_value do |entry|
   if entry.has_key?('adresse') && (!entry.has_key?('adresse_normalisee'))
     adresse = entry['adresse'].dup
@@ -49,4 +45,5 @@ adresses.each_value do |entry|
   end
 end
 
-File.open(ARGV[1], 'w') {|f| f.write(JSON.pretty_generate(adresses)) }
+# on stocke le résultat dans adresses_normalisees.json
+File.open('adresses_normalisees.json', 'w') { |f| f.write(JSON.pretty_generate(adresses)) }

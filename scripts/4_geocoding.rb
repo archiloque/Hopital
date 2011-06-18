@@ -1,46 +1,35 @@
-# Récupère les information de géocodage avec l'API Google Maps
-# Prend en entrée le nom d'un fichier json d'entrée et le nom d'un fichier json en sortie
-# Récupère l'adresse dans la valeur "adresse_normalisee" et n'appeller google que si
+# Récupère les information de géocodage ainsi que l'adresse formattée
+# Entrée dans adresses_normalisees.json et sortie dans adresses_geolocalisee.json
+# Récupère l'adresse dans la valeur "adresse_normalisee" et n'appelle google que si
 # la clé geolocalisation n'est pas présente
 # L'adresse formattée est stockée dans "adresse_formattee"
 # Les informations de géolocalisation sont stockées dans l'attribut "geolocalisation"
 
-
-if ARGV.length != 2
-  raise 'Deux noms de fichier à spécifier'
-end
-
-require 'rubygems'
 require 'json'
 require 'rest-client'
 
-adresses = JSON.parse IO.read(ARGV[0])
+# on lit les données dans adresses_normalisees.json
+adresses = JSON.parse IO.read('adresses_normalisees.json')
 
 # Fait un appel à google maps avec l'adresse passée en paramètre et parse le retour sour forme json
 def query adresse
   JSON.parse(RestClient.get 'http://maps.googleapis.com/maps/api/geocode/json',
                             {:params =>
-                                    {:region => :FR,
-                                     :language => :fr,
-                                     :sensor => :false,
-                                     :address => adresse}})
+                                 {:region => :FR,
+                                  :language => :fr,
+                                  :sensor => :false,
+                                  :address => adresse}})
 end
 
-interrupted = false
-trap('INT') { interrupted = true }
-
+# Itère sur les adresses en gèrant un délai quand on fait trop de requêtes: augmentera de 2 secondes à chaque fois
 delay = 0
-
 adresses.each_value do |entry|
-  if interrupted
-    File.open(ARGV[1], 'w') { |f| f.write(JSON.pretty_generate(adresses)) }
-    abort 'Interrompu'
-  end
 
   if entry.has_key?('adresse_normalisee') && (!entry.has_key?('geolocalisation'))
     adresse = entry['adresse_normalisee']
 
     result = query(adresse)
+    # dépassement du quota: on attend jusqu'à ce que ça passe
     while result['status'] == 'OVER_QUERY_LIMIT'
       delay += 2
       sleep delay
@@ -48,7 +37,6 @@ adresses.each_value do |entry|
     end
 
     status = result['status']
-    p "#{status} #{adresse}"
 
     entry['geolocalisation'] = geolocalisation = {'status' => status}
     if status == 'OK'
@@ -61,4 +49,5 @@ adresses.each_value do |entry|
   end
 end
 
-File.open(ARGV[1], 'w') { |f| f.write(JSON.pretty_generate(adresses)) }
+# on stocke le résultat dans adresses_geolocalisee.json
+File.open('adresses_geolocalisee.json', 'w') { |f| f.write(JSON.pretty_generate(adresses)) }
